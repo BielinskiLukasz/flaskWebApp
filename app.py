@@ -7,7 +7,7 @@ def hello():
     return 'Hello, World!'
 	
 @app.route('/method')
-	def method():
+def method():
     return f'{request.method}' 
 
 
