@@ -11,7 +11,7 @@ def hello():
 def method():
     return f'{request.method}' 
 	
-@app.route('/show/<uuid>', methods=['GET', 'POST'])
+@app.route('/show_data/<uuid>', methods=['GET', 'POST'])
 def show(uuid):
     content = request.get_json(silent=True)
     return jsonify({"uuid":uuid})
