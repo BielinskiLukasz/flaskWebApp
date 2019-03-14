@@ -11,7 +11,11 @@ def hello():
 @app.route('/method',methods = ['GET', 'POST', 'PUT', 'DELETE'])
 def method():
     return f'{request.method}' 
+	
+@app.route('/show/<json>',methods = ['GET', 'POST'])
+def show(json):
+    return json.json()
 
-
+	
 if __name__ == '__main__':
     app.run(debug=True)
