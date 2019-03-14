@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -12,9 +11,10 @@ def hello():
 def method():
     return f'{request.method}' 
 	
-@app.route('/show/<mes>',methods = ['GET', 'POST'])
-def show(mes):
-    return f'{request.get_json}'
+@app.route('/show/<uuid>', methods=['GET', 'POST'])
+def show(uuid):
+    content = request.get_json(silent=True)
+    return uuid
 
 	
 if __name__ == '__main__':
