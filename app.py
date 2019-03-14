@@ -8,9 +8,17 @@ app = Flask(__name__)
 def hello():
     return 'Hello, World!'
 	
-@app.route('/method',methods = ['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/method',methods = ['GET'])
 def method():
     return f'{request.method}' 
+	
+@app.route('/method',methods = ['POST'])
+def method():
+    return f'{request.method}'
+	
+@app.route('/method',methods = ['GET', 'POST', 'PUT', 'DELETE'])
+def method():
+    return f'{request.method}'
 
 
 if __name__ == '__main__':
