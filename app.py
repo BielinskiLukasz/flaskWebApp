@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -13,8 +13,8 @@ def method():
 	
 @app.route('/show_data', methods=['POST'])
 def show():
-    content = request.get_json(silent=True)
-    return str(content)
+    join = request.args.get('join')
+    return str(join)
 
 	
 if __name__ == '__main__':
