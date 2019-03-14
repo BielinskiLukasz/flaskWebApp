@@ -14,7 +14,7 @@ def method():
 @app.route('/show_data/<uuid>', methods=['GET', 'POST'])
 def show(uuid):
     content = request.get_json(silent=True)
-    return uuid
+    return str(uuid)
 
 	
 if __name__ == '__main__':
