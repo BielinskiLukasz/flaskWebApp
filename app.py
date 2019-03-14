@@ -14,7 +14,7 @@ def method():
 @app.route('/show_data', methods=['POST'])
 def show():
     #join = request.args.get('join')
-    join = request.data
+    join = request.get_json()
     return str(join)
 
 	
