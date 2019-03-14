@@ -11,10 +11,10 @@ def hello():
 def method():
     return f'{request.method}' 
 	
-@app.route('/show_data/<uuid>', methods=['GET', 'POST'])
-def show(uuid):
+@app.route('/show_data', methods=['POST'])
+def show():
     content = request.get_json(silent=True)
-    return str(uuid)
+    return str(content)
 
 	
 if __name__ == '__main__':
