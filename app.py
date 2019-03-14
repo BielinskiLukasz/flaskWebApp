@@ -12,9 +12,9 @@ def hello():
 def method():
     return f'{request.method}' 
 	
-@app.route('/show/<json>',methods = ['GET', 'POST'])
-def show(json):
-    return json.json()
+@app.route('/show/<mes>',methods = ['GET', 'POST'])
+def show(mes):
+    return f'{request.get_json}'
 
 	
 if __name__ == '__main__':
