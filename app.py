@@ -16,7 +16,11 @@ def method():
 def method():
     return f'{request.method}'
 	
-@app.route('/method',methods = ['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/method',methods = ['PUT'])
+def method():
+    return f'{request.method}'
+	
+@app.route('/method',methods = ['DELETE'])
 def method():
     return f'{request.method}'
 
