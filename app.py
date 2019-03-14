@@ -13,7 +13,8 @@ def method():
 	
 @app.route('/show_data', methods=['POST'])
 def show():
-    join = request.args.get('join')
+    #join = request.args.get('join')
+    join = request.data
     return str(join)
 
 	
