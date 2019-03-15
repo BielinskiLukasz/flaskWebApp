@@ -33,11 +33,10 @@ def show():
 # '{"name": "somename", "surename": "somesurename"}' i zwróci stringa w postaci `Na imię mu somename, a nazwisko jego
 # somesurename`. Naturalnie ścieżka ma działać dla dowolnych stringów (w kodowaniu utf-8) podanych w polach `name`
 # i `surename`.
-@app.route('/show_data', methods=['POST'])
-def show():
-    # json = request.args.get('json')
+@app.route('/pretty_print_name', methods=['POST'])
+def print_name():
     json = request.get_json()
-    return str(json).replace("\'", "\"")
+    return f'Na imię mu {json["name"]}, a nazwisko jego {json["surename"]}'
 
 
 # Zad5
