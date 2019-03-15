@@ -2,6 +2,8 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+app.visitCounter = 0  # for last task
+
 
 # Zad1
 # Stwórz ścieżkę '/' która zwracać będzie 'Hello, World!".
@@ -42,10 +44,14 @@ def print_name():
 # Zad5
 # Stwórz ścieżkę `/counter` która zliczać będzię odwiedziny tej ścieżki.
 # W tym zadaniu ważne jest aby znaleźć miejsce w którym będzie można zapisać ilość odwiedzin od ostatniego uruchomienia
-# aplikacji na serwerze
-# na tym etapie kursu nie bawimy się w bazy danych
-# być może spostrzeżesz bardzo ciekawe zachowanie ;-)
-# TODO implement
+# aplikacji na serwerze.
+# Na tym etapie kursu nie bawimy się w bazy danych.
+# Być może spostrzeżesz bardzo ciekawe zachowanie ;-)
+@app.route('/counter', methods=['GET'])
+def counter():
+    app.visitCounter += 1
+    return str(app.visitCounter)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
