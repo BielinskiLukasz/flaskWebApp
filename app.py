@@ -239,13 +239,14 @@ def trains():
 # DELETE:
 # Usuwamy id'tą obserwację pociągu.
 @app.route('/trains/<train_id>', methods=['GET', 'DELETE'])
+@requires_user_session
 def train(train_id):
     if train_id not in app.trains:
         return 'No such train', 404
 
     if request.method == 'DELETE':
         del app.trains[train_id]
-        return '', 204
+        return 'Deleted', 204
 
     return jsonify(app.trains[train_id])
 
