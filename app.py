@@ -93,8 +93,8 @@ def requires_basic_auth(func):
 @app.route('/login', methods=['GET', 'POST'])
 @requires_basic_auth
 def login():
-    session['username'] = request.authorization.username
-    return redirect(url_for('hello'))
+    # session['username'] = request.authorization.username
+    return redirect(url_for('hello_after_auth'))
 
 
 @app.route('/hello')
