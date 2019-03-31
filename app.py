@@ -226,6 +226,18 @@ def trains():
         return redirect(url_for('train', train_id=train_id, format='json'))
 
 
+# Zad3.6
+# Kolejny endpoint '/trains/<id>' powinen:
+# - Obsługiwać metody - DELETE i GET
+# - Endpoint tylko dla zalogowanych użytkowników
+# - powinien obsługiwać query_string w postaci ?format=json, kóry spowoduje zwrócenie
+#   danych w formacie JSON
+#
+# GET:
+# Zwraca informacje o id'tej obserwacji pociągu.
+#
+# DELETE:
+# Usuwamy id'tą obserwację pociągu.
 @app.route('/trains/<train_id>', methods=['GET', 'DELETE'])
 def train(train_id):
     if train_id not in app.trains:
