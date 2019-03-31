@@ -241,9 +241,6 @@ def trains():
 @app.route('/trains/<train_id>', methods=['GET', 'DELETE'])
 @requires_user_session
 def train(train_id):
-    # if train_id not in app.trains:
-    #     return jsonify({"message": "No such train"}), 404
-
     if request.method == 'DELETE':
         del app.trains[train_id]
         return jsonify({"message": "Deleted"}), 204
