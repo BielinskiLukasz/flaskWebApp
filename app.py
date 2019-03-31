@@ -204,17 +204,14 @@ def get_train_from_json():
     return train_data
 
 
-def set_train(train_id=None, data=None, update=False):
+def set_train(train_id=None, data=None):
     if train_id is None:
         train_id = str(uuid4())
 
     if data is None:
         data = get_train_from_json()
 
-    if update:
-        app.trains[train_id].update(data)
-    else:
-        app.trains[train_id] = data
+    app.trains[train_id] = data
 
     return train_id
 
