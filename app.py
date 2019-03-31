@@ -97,7 +97,18 @@ def login():
     return redirect(url_for('hello_after_auth'))
 
 
+def requires_user_session(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not session.get('username'):
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 @app.route('/hello')
+@requires_user_session
 def hello_after_auth():
     return 'You have access here :)'
 
@@ -111,16 +122,6 @@ def hello_after_auth():
 # Po wykonaniu akcji, użytkownik powinien stracić możliwość korzystania z
 # chronionych endpointów ('/trains', '/logout', ...) i zostać przekierowany na
 # '/'.
-def requires_user_session(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not session.get('username'):
-            return redirect(url_for('login'))
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 @app.route('/logout', methods=['POST'])
 @requires_user_session
 def logout():
