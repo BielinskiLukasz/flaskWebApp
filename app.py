@@ -226,8 +226,15 @@ def trains():
         return jsonify(app.trains)
     elif request.method == 'POST':
         train_id = set_train()
-        # return redirect(url_for('train', train_id=train_id, format='json'))
-        return jsonify(app.trains)
+        return redirect(url_for('train', train_id=train_id, format='json'))
+
+
+@app.route('/trains/<train_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+def train(train_id):
+    if train_id not in app.trains:
+        return 'No such train', 404
+
+    return jsonify(app.trains[train_id])
 
 
 if __name__ == '__main__':
