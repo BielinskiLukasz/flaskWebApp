@@ -124,13 +124,11 @@ def requires_user_session(func):
     return wrapper
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout', methods=['POST'])
 @requires_user_session
 def logout():
-    if request.method == 'GET':
-        return redirect(url_for('hello'))
     del session['username']
-    return redirect(url_for('login'))
+    return redirect(url_for('hello'))
 
 
 if __name__ == '__main__':
