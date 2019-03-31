@@ -54,7 +54,8 @@ def counter():
     return str(app.visitCounter)
 
 
-# Zad3.2. Wykonaj endpoint:
+# Zad3.2
+# Wykonaj endpoint:
 # '/login' - POST
 # 
 # na którym to możemy zalogować się do konta za pomocą poniższych sekretów:
@@ -93,13 +94,40 @@ def requires_basic_auth(func):
 @app.route('/login', methods=['GET', 'POST'])
 @requires_basic_auth
 def login():
-    # session['username'] = request.authorization.username
     return redirect(url_for('hello_after_auth'))
 
 
 @app.route('/hello')
 def hello_after_auth():
     return 'You have access here :)'
+
+
+# Zad3.2
+# Kolejny endpoint '/logout' powinien:
+# - obsługiwać metodę POST
+# - być dostępny tylko dla zalogowanych użytkowników.
+# - gdy użytkownik nie jest zalogowany to przekieruj na '/login'
+#
+# Po wykonaniu akcji, użytkownik powinien stracić możliwość korzystania z
+# chronionych endpointów ('/trains', '/logout', ...) i zostać przekierowany na
+# '/'.
+def requires_user_session(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not session.get('username'):
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+@requires_user_session
+def logout():
+    if request.method == 'GET':
+        return redirect(url_for('root'))
+    del session['username']
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
