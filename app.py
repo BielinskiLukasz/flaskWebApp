@@ -1,4 +1,4 @@
-from flask import Flask, request, session, Response
+from flask import Flask, request, session, Response, redirect, url_for
 from functools import wraps
 
 app = Flask(__name__)
@@ -72,11 +72,12 @@ def check_auth(username, password):
     valid."""
     return username == 'TRAIN' and password == 'TuN3L'
 
+
 def please_authenticate():
     """Sends a 401 response that enables basic auth"""
-    return Response('Could not verify your access level for that URL.\n'
-                    'You have to login with proper credentials', 401,
+    return Response('You have to login with proper credentials', 401,
                     {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
 
 def requires_basic_auth(func):
     @wraps(func)
@@ -88,11 +89,17 @@ def requires_basic_auth(func):
 
     return wrapper
 
+
 @app.route('/login', methods=['GET', 'POST'])
 @requires_basic_auth
 def login():
     session['username'] = request.authorization.username
     return redirect(url_for('hello'))
+
+
+@app.route('/hello')
+def hello():
+    return 'You have access here :)'
 
 
 if __name__ == '__main__':
