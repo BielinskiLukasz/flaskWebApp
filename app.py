@@ -1,9 +1,11 @@
 from flask import Flask, request, session, Response, redirect, url_for
 from functools import wraps
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # for Zad3.2
 
-app.visitCounter = 0  # for last task
+app.visitCounter = 0  # for Zad1.5
 
 
 # Zad1.1
@@ -94,6 +96,7 @@ def requires_basic_auth(func):
 @app.route('/login', methods=['GET', 'POST'])
 @requires_basic_auth
 def login():
+    session['username'] = request.authorization.username
     return redirect(url_for('hello_after_auth'))
 
 
@@ -125,7 +128,7 @@ def requires_user_session(func):
 @requires_user_session
 def logout():
     if request.method == 'GET':
-        return redirect(url_for('root'))
+        return redirect(url_for('hello'))
     del session['username']
     return redirect(url_for('login'))
 
