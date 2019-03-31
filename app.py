@@ -98,7 +98,7 @@ def login():
 
 
 @app.route('/hello')
-def hello():
+def hello_after_auth():
     return 'You have access here :)'
 
 
