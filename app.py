@@ -226,7 +226,8 @@ def trains():
         return jsonify(app.trains)
     elif request.method == 'POST':
         train_id = set_train()
-        return redirect(url_for('train', train_id=train_id, format='json'))
+        # return redirect(url_for('train', train_id=train_id, format='json'))
+        return jsonify(app.trains)
 
 
 if __name__ == '__main__':
