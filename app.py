@@ -97,7 +97,7 @@ def login():
     return redirect(url_for('hello_after_auth'))
 
 
-def requires_user_session(func):
+def requires_user_session(func):  # for Zad3.3
     @wraps(func)
     def wrapper(*args, **kwargs):
         if not session.get('username'):
@@ -110,10 +110,10 @@ def requires_user_session(func):
 @app.route('/hello')
 @requires_user_session
 def hello_after_auth():
-    return 'You have access here :)'
+    return render_template('hello_after_auth.html', user=session['username'])  # for Zad3.4
 
 
-# Zad3.2
+# Zad3.3
 # Kolejny endpoint '/logout' powinien:
 # - obsługiwać metodę POST
 # - być dostępny tylko dla zalogowanych użytkowników.
@@ -127,6 +127,21 @@ def hello_after_auth():
 def logout():
     del session['username']
     return redirect(url_for('hello'))
+
+
+# Zad3.4
+# Kolejny endpoint '/hello' powienien:
+# - obsługiwać metodę GET
+# - być dostępny tylko dla zalogowanych użytkowników
+# - przekierowywać na '/login' gdy użytkownik nie jest zalogowany
+# - zwracać pooprawny HTML z powitaniem
+#
+# Poprawny dokument HTML powinien zawierać dowolny element (np. <p>, <h1>) z
+# atrybutem 'id=greeting'. Tekst powitania powinien być taki:
+# 'Hello, {{ user }}!'.
+#
+# Za '{{ user }}' wstawiamy nazwę użytkownika | użyj silnika templatek np.
+# jinja2.
 
 
 if __name__ == '__main__':
