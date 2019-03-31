@@ -229,10 +229,14 @@ def trains():
         return redirect(url_for('train', train_id=train_id, format='json'))
 
 
-@app.route('/trains/<train_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@app.route('/trains/<train_id>', methods=['GET', 'DELETE'])
 def train(train_id):
     if train_id not in app.trains:
         return 'No such train', 404
+
+    if request.method == 'DELETE':
+        del app.trains[train_id]
+        return '', 204
 
     return jsonify(app.trains[train_id])
 
