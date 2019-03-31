@@ -71,13 +71,10 @@ def counter():
 # etapach. Podpowiadamy, trzeba utworzyć sesję, można samemu obsłużyć cookie,
 # albo skorzystać z gotowego mechanizmu: flask.session.
 def check_auth(username, password):
-    """This function is called to check if a username password combination is
-    valid."""
     return username == 'TRAIN' and password == 'TuN3L'
 
 
 def please_authenticate():
-    """Sends a 401 response that enables basic auth"""
     return Response('You have to login with proper credentials', 401,
                     {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
