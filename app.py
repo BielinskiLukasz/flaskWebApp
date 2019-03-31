@@ -1,11 +1,12 @@
-from flask import Flask, request, session, Response, redirect, url_for, render_template
+from flask import Flask, request, session, Response, redirect, url_for, render_template, jsonify
 from functools import wraps
+from uuid import uuid4
 import os
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # for Zad3.2
-
 app.visitCounter = 0  # for Zad1.5
+app.secret_key = os.urandom(24)  # for Zad3.2
+app.trains = {}  # for Zad3.5
 
 
 # Zad1.1
@@ -142,6 +143,97 @@ def logout():
 #
 # Za '{{ user }}' wstawiamy nazwę użytkownika | użyj silnika templatek np.
 # jinja2.
+
+# modified previous code
+
+
+# Zad3.5
+# Kolejny endpoint '/trains' powinien:
+# - Obsługiwać metody - POST i GET
+# - być dostępny tylko dla zalogowanych użytkowników.
+# - powinien obsługiwać query_string w postaci ?format=json kóry spowoduje zwrócenie
+#   danych w formacie JSON
+# - domyślne odpowiada XML
+#
+#
+# POST:
+# Jak zobaczysz jakiś pociąg, to ta akcja umożliwi Ci dodanie tej obserwacji.
+# format: json, wg. specyfikacji:
+#
+# {
+#     "who": "JA",
+#     "where": "Wąchock",
+#     "trucks": 21,
+#     "locomotive": "gama",
+#     "date": "2019-01-01"
+# }
+#
+# gdzie:
+#     "who" → STRING
+#     "where" → STRING
+#     "trucks" → INT
+#     "locomotive" → STRING
+#     "date" → STRING
+#
+# po pomyślnie dodanej obserwacji, powinniśmy być przekierowani na adres:
+# '/trains/<id>?format=json'
+#
+# GET:
+#
+# Metoda powinna zwrócić wszystkie dodane wcześniej dane pociągów.
+#
+# Format odpowiedzi w postaci jsona (w przypadku dodania '/trains?format=json'):
+# {
+#     "uuid_1": {
+#         "who": "JA",
+#         "where": "Wąchock",
+#         "trucks": 21,
+#         "locomotive": "gama",
+#         "date": "2019-01-01"
+#     },
+#     "uuid_2": {
+#         "who": "TY",
+#         "where": "Tunel",
+#         "trucks": 2,
+#         "locomotive": "Marathon",
+#         "date": "2019-01-02"
+#     }
+# }
+def get_train_from_json():
+    train_data = request.get_json()
+    return train_data
+
+
+def set_train(train_id=None, data=None, update=False):
+    if train_id is None:
+        train_id = str(uuid4())
+
+    if data is None:
+        data = get_train_from_json()
+
+    if update:
+        app.trains[train_id].update(data)
+    else:
+        app.trains[train_id] = data
+
+    return train_id
+
+
+@app.route('/trains', methods=['GET', 'POST'])
+@requires_user_session
+def trains():
+    if request.method == 'GET':
+        return jsonify(app.trains)
+    elif request.method == 'POST':
+        train_id = set_train()
+        return redirect(url_for('train', train_id=train_id, format='json'))
+
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
 
 if __name__ == '__main__':
