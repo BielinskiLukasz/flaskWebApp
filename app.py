@@ -242,11 +242,11 @@ def trains():
 @requires_user_session
 def train(train_id):
     if train_id not in app.trains:
-        return 'No such train', 404
+        return jsonify({"message": "No such train"}), 404
 
     if request.method == 'DELETE':
         del app.trains[train_id]
-        return 'Deleted', 204
+        return jsonify({"message": "Deleted"}), 204
 
     return jsonify(app.trains[train_id])
 
