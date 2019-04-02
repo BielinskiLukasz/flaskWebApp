@@ -9,7 +9,7 @@ app.visitCounter = 0  # for Zad1.5
 app.secret_key = os.urandom(24)  # for Zad3.2
 app.trains = {}  # for Zad3.5
 
-DATABASE = '/path/to/database.db'  # for Zad4.1
+DATABASE = 'chinook.db'  # for Zad4.1
 
 
 # Zad1.1
