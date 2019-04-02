@@ -1,12 +1,15 @@
-from flask import Flask, request, session, Response, redirect, url_for, render_template, jsonify
+from flask import Flask, request, session, Response, redirect, url_for, render_template, jsonify, g
 from functools import wraps
 from uuid import uuid4
 import os
+import sqlite3
 
 app = Flask(__name__)
 app.visitCounter = 0  # for Zad1.5
 app.secret_key = os.urandom(24)  # for Zad3.2
 app.trains = {}  # for Zad3.5
+
+DATABASE = '/path/to/database.db'  # for Zad4.1
 
 
 # Zad1.1
@@ -246,6 +249,32 @@ def train(train_id):
         return jsonify({"message": "Deleted"}), 204
 
     return jsonify(app.trains[train_id])
+
+
+# Zad4.1
+# Stwórz endpoint /tracks
+#  - zwraca w JSONie listę wszystkich nazw utwórów w tabeli 'tracks'. Kolejsność nazw utwórów powinna być alfabetyczna
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+    return db
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
+
+@app.route('/tracks')
+def tracks_list():
+    db = get_db()
+    cursor = db.cursor()
+    data = cursor.execute('SELECT name FROM tracks').fetchall()
+    cursor.close()
+    return render_template('tracks.html', tracks=data)
 
 
 if __name__ == '__main__':
