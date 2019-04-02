@@ -274,7 +274,7 @@ def tracks_list():
     cursor = db.cursor()
     data = cursor.execute('SELECT name FROM tracks ORDER BY name COLLATE NOCASE').fetchall()
     cursor.close()
-    return jsonify(data)
+    return jsonify([row[0] for row in data])
 
 
 if __name__ == '__main__':
