@@ -272,7 +272,7 @@ def close_connection(exception):
 def tracks_list():
     db = get_db()
     cursor = db.cursor()
-    data = cursor.execute('SELECT name FROM tracks ORDER BY name').fetchall()
+    data = cursor.execute('SELECT name FROM tracks ORDER BY name COLLATE NOCASE').fetchall()
     cursor.close()
     return jsonify(data)
 
