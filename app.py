@@ -273,8 +273,8 @@ def tracks_list():
     db = get_db()
     form = request.args
     artist = form.get('artist')
-    per_page = form.data['per_page'] or -1
-    page = form.data['page'] or 0
+    per_page = form.get('per_page') or -1
+    page = form.get('page') or 0
     page_index = page - 1
     limit = per_page
     offset = page_index * per_page
