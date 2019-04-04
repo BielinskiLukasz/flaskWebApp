@@ -292,7 +292,7 @@ def tracks_list():
             'ORDER BY tracks.name COLLATE NOCASE',
             (artist,)) \
             .fetchall()
-        return jsonify(data)
+        return jsonify([row[0] for row in data])
 
 
 # Zad4.2
@@ -301,7 +301,6 @@ def tracks_list():
 #  AC/DC
 #  - AC/DC jest tylko przykładem, funckja powinna obsługiwać różnych wykonawców
 #  - wyniki powinny być zwrócone w kolejności alfabetycznej
-
 
 
 if __name__ == '__main__':
