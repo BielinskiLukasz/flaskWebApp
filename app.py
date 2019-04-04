@@ -268,17 +268,31 @@ def close_connection(exception):
         db.close()
 
 
-@app.route('/tracks')
+@app.route('/tracks', methods=['GET', 'POST'])
 def tracks_list():
     db = get_db()
-    cursor = db.cursor()
-    data = cursor.execute(
-        'SELECT name '
-        'FROM tracks '
-        'ORDER BY name COLLATE NOCASE') \
-        .fetchall()
-    cursor.close()
-    return jsonify([row[0] for row in data])
+    if request.method == 'GET':
+        cursor = db.cursor()
+        data = cursor.execute(
+            'SELECT name '
+            'FROM tracks '
+            'ORDER BY name COLLATE NOCASE') \
+            .fetchall()
+        cursor.close()
+        return jsonify([row[0] for row in data])
+    else:  # for Zad4.2
+        form = request.args
+        artist = form.get('artist')
+        data = db.execute(
+            'SELECT tracks.name '
+            'FROM tracks '
+            'JOIN albums ON tracks.albumId = albums.albumId '
+            'JOIN artists ON albums.artistId = artists.artistId '
+            'WHERE artists.name = ? '
+            'ORDER BY tracks.name COLLATE NOCASE',
+            (artist,)) \
+            .fetchone()
+        return jsonify(data)
 
 
 # Zad4.2
@@ -287,19 +301,7 @@ def tracks_list():
 #  AC/DC
 #  - AC/DC jest tylko przykładem, funckja powinna obsługiwać różnych wykonawców
 #  - wyniki powinny być zwrócone w kolejności alfabetycznej
-@app.route('/tracks/<artist>')
-def single_track(artist):
-    db = get_db()
-    data = db.execute(
-        'SELECT tracks.name '
-        'FROM tracks '
-        'JOIN albums ON tracks.albumId = albums.albumId '
-        'JOIN artists ON albums.artistId = artists.artistId '
-        'WHERE artists.name = ? '
-        'ORDER BY tracks.name COLLATE NOCASE',
-        (artist,)) \
-        .fetchone()
-    return jsonify(data)
+
 
 
 if __name__ == '__main__':
