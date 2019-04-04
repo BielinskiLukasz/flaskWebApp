@@ -273,12 +273,20 @@ def tracks_list():
     db = get_db()
     form = request.args
     artist = form.get('artist')
+    per_page = form.data['per_page'] or -1
+    page = form.data['page'] or 0
+    page_index = page - 1
+    limit = per_page
+    offset = page_index * per_page
+
     if form.get('artist') is None:
         cursor = db.cursor()
         data = cursor.execute(
             'SELECT name '
             'FROM tracks '
-            'ORDER BY name COLLATE NOCASE') \
+            'ORDER BY name COLLATE NOCASE '
+            'LIMIT ? OFFSET ?',
+            (artist,)) \
             .fetchall()
         cursor.close()
         return jsonify([row[0] for row in data])
@@ -289,8 +297,9 @@ def tracks_list():
             'JOIN albums ON tracks.albumId = albums.albumId '
             'JOIN artists ON albums.artistId = artists.artistId '
             'WHERE artists.name = ? '
-            'ORDER BY tracks.name COLLATE NOCASE',
-            (artist,)) \
+            'ORDER BY tracks.name COLLATE NOCASE '
+            'LIMIT ? OFFSET ?',
+            (artist, limit, offset)) \
             .fetchall()
         return jsonify([row[0] for row in data])
 
