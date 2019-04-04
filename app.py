@@ -268,10 +268,12 @@ def close_connection(exception):
         db.close()
 
 
-@app.route('/tracks', methods=['GET', 'POST'])
+@app.route('/tracks', methods=['GET'])
 def tracks_list():
     db = get_db()
-    if request.method == 'GET':
+    form = request.args
+    artist = form.get('artist')
+    if form.get('artist') is None:
         cursor = db.cursor()
         data = cursor.execute(
             'SELECT name '
@@ -281,8 +283,6 @@ def tracks_list():
         cursor.close()
         return jsonify([row[0] for row in data])
     else:  # for Zad4.2
-        form = request.args
-        artist = form.get('artist')
         data = db.execute(
             'SELECT tracks.name '
             'FROM tracks '
