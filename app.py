@@ -291,7 +291,7 @@ def tracks_list():
             'WHERE artists.name = ? '
             'ORDER BY tracks.name COLLATE NOCASE',
             (artist,)) \
-            .fetchone()
+            .fetchall()
         return jsonify(data)
 
 
