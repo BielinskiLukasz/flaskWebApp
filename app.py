@@ -254,6 +254,54 @@ def train(train_id):
 # Zad4.1
 # Stwórz endpoint /tracks
 #  - zwraca w JSONie listę wszystkich nazw utwórów w tabeli 'tracks'. Kolejsność nazw utwórów powinna być alfabetyczna
+
+# Zad4.2
+# Dodaj obsługę parametru 'artist' do uprzednio stworzonego endpointu
+#  - parametr '?artist=AC/DC' ma spowodować zwrócenie w JSONie listy z nazwami utworów, które są odegrane przez zespół
+#  AC/DC
+#  - AC/DC jest tylko przykładem, funckja powinna obsługiwać różnych wykonawców
+#  - wyniki powinny być zwrócone w kolejności alfabetycznej
+
+# Zad4.3
+# Dodaj do endpointu /tracks możliwość dzielenia wyniku na strony:
+#  - obsługa parametru ?per_page=10 - ilość wyników na stronie,
+#  - obsługa parametru ?page=1 - strona z której pokażą się wyniki. Pierwsza strona powinna mieć numer 1
+#  - rozwiązanie powinno działać porawnie z wcześniej obsługiwanymi parametrami - lub ich brakiem
+#
+# Wskazówka:
+# Proszę zapoznać się z słowami kluczowymi LIMIT i OFFSET
+
+# Zad4.4
+# Dodaj do endpointu /tracks
+#  - możliwość dodawania nowych kawałków (POST JSON)
+#  - stworzenie nowego obiektu powinno objawić się zwróconym kodem 200
+#  - niestworzenie obiektu powinno objawić się zwróconym kodem 400 jeśli przesłane dane będą niekompletne, można
+#  pokusić się o dodatkowe pole errors w zwracanym JSONie, które mówiłoby co poszło nie tak.
+#
+# Przykładowy POST:
+# {
+#     "album_id": 21,
+#     "media_type_id": 1,
+#     "genre_id": 3,
+#     "name": "Speeding",
+#     "composer": "Hooker",
+#     "milliseconds": 100,
+#     "bytes": 10000,
+#     "price": 1000
+# }
+#
+# Przykładowa odpowiedź z sukcesem:
+# {
+#     "track_id": 10000,
+#     "album_id": 21,
+#     "media_type_id": 1,
+#     "genre_id": 3,
+#     "name": "Speeding",
+#     "composer": "Hooker",
+#     "milliseconds": 100,
+#     "bytes": 10000,
+#     "price": 1000
+# }
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -268,7 +316,7 @@ def close_connection(exception):
         db.close()
 
 
-@app.route('/tracks', methods=['GET'])
+@app.route('/tracks', methods=['GET', 'POST'])
 def tracks_list():
     db = get_db()
     form = request.args
@@ -279,37 +327,57 @@ def tracks_list():
     limit = per_page
     offset = page_index * per_page
 
-    if form.get('artist') is None:
-        cursor = db.cursor()
-        data = cursor.execute(
-            'SELECT name '
-            'FROM tracks '
-            'ORDER BY name COLLATE NOCASE '
-            'LIMIT ? OFFSET ?',
-            (artist,)) \
-            .fetchall()
-        cursor.close()
-        return jsonify([row[0] for row in data])
-    else:  # for Zad4.2
-        data = db.execute(
-            'SELECT tracks.name '
-            'FROM tracks '
-            'JOIN albums ON tracks.albumId = albums.albumId '
-            'JOIN artists ON albums.artistId = artists.artistId '
-            'WHERE artists.name = ? '
-            'ORDER BY tracks.name COLLATE NOCASE '
-            'LIMIT ? OFFSET ?',
-            (artist, limit, offset)) \
-            .fetchall()
-        return jsonify([row[0] for row in data])
+    if request.method == 'GET':
+        if form.get('artist') is None:
+            cursor = db.cursor()
+            data = cursor.execute(
+                'SELECT name '
+                'FROM tracks '
+                'ORDER BY name COLLATE NOCASE '
+                'LIMIT ? OFFSET ?',
+                (artist,)) \
+                .fetchall()
+            cursor.close()
+            return jsonify([row[0] for row in data])
+        else:
+            data = db.execute(
+                'SELECT tracks.name '
+                'FROM tracks '
+                'JOIN albums ON tracks.albumId = albums.albumId '
+                'JOIN artists ON albums.artistId = artists.artistId '
+                'WHERE artists.name = ? '
+                'ORDER BY tracks.name COLLATE NOCASE '
+                'LIMIT ? OFFSET ?',
+                (artist, limit, offset)) \
+                .fetchall()
+            return jsonify([row[0] for row in data])
+    else:
+        db = get_db()
 
+        new_id = int(db.execute(
+            'SELECT MAX(trackId) '
+            'FROM tracks ').fetchone()) + 1
 
-# Zad4.2
-# Dodaj obsługę parametru 'artist' do uprzednio stworzonego endpointu
-#  - parametr '?artist=AC/DC' ma spowodować zwrócenie w JSONie listy z nazwami utworów, które są odegrane przez zespół
-#  AC/DC
-#  - AC/DC jest tylko przykładem, funckja powinna obsługiwać różnych wykonawców
-#  - wyniki powinny być zwrócone w kolejności alfabetycznej
+        new_track = request.get_json()
+        track_name = new_track.get('name')  # str
+        track_album_id = new_track.get('album_id')  # int
+        track_media_type_id = new_track.get('media_type_id')  # int
+        track_genre_id = new_track.get('genre_id')  # int
+        track_composer = new_track.get('composer')  # str
+        track_miliseconds = new_track.get('milliseconds')  # int
+        track_bytes = new_track.get('bytes')  # int
+        track_unit_price = new_track.get('unit_price')  # real
+
+        db.execute(
+            'INSERT INTO tracks (trackId, name, albumId, mediaTypeId, GenreId, Composer, Milliseconds, Bytes, '
+            'UnitPrice) '
+            'VALUES (new_id, :track_name, :track_album_id, :track_media_type_id, :track_genre_id, :track_composer, '
+            'track_miliseconds, track_bytes, track_unit_price);',
+            new_track
+        )
+        db.commit()
+
+        return None
 
 
 if __name__ == '__main__':
