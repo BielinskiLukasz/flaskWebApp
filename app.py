@@ -363,14 +363,22 @@ def tracks_list():
         new_track = request.get_json()
         if new_track is None:
             return "", 400
-        # track_name = new_track.get('name')  # str
-        # track_album_id = new_track.get('album_id')  # int
-        # track_media_type_id = new_track.get('media_type_id')  # int
-        # track_genre_id = new_track.get('genre_id')  # int
-        # track_composer = new_track.get('composer')  # str
-        # track_milliseconds = new_track.get('milliseconds')  # int
-        # track_bytes = new_track.get('bytes')  # int
-        # track_unit_price = new_track.get('unit_price')  # real
+        if new_track.get('name') is None:
+            return "", 400
+        if new_track.get('album_id') is None:
+            return "", 400
+        if new_track.get('media_type_id') is None:
+            return "", 400
+        if new_track.get('genre_id') is None:
+            return "", 400
+        if new_track.get('composer') is None:
+            return "", 400
+        if new_track.get('milliseconds') is None:
+            return "", 400
+        if new_track.get('bytes') is None:
+            return "", 400
+        if new_track.get('price') is None:
+            return "", 400
 
         db.execute(
             'INSERT INTO tracks '
