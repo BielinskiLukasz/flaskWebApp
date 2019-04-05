@@ -352,8 +352,6 @@ def tracks_list():
                 .fetchall()
             return jsonify([row[0] for row in data])
     else:
-        db = get_db()
-
         max_id_data = db.execute(
             'SELECT trackId '
             'FROM tracks '
@@ -396,6 +394,35 @@ def tracks_list():
             (new_id,)).fetchone()
 
         return jsonify(data)
+
+
+# Zad4.5
+# Dodaj nowy endpoint /genres
+#  - zwrócić JSON w którym klucze to nazwy gatunków, a wartości to ilość utworów przynależących do danego gatunku
+#
+# Wskazówka:
+#  - Proszę zapoznać się ze słowem kluczowym GROUP BY oraz agregacją
+#
+# Przykładowa odpowiedź:
+# {
+#     "Alternative": 40,
+#     "Alternative & Punk": 0
+#     "Blues": 0,
+#     ...,
+#     "TV Shows": 0,
+#     "World": 0
+# }
+@app.route('/genres')
+def genres():
+    db = get_db()
+    data = db.execute(
+        'SELECT genres.name, count(*) '
+        'FROM genres '
+        'LEFT JOIN tracks ON genres.genreId = tracks.genreId '
+        'GROUP BY genres.name ') \
+        .fetchall()
+
+    return jsonify(dict(data))
 
 
 if __name__ == '__main__':
